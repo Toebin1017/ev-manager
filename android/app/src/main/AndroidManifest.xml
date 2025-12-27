@@ -4,7 +4,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
     
     <application
-        android:label="电动车管理"
+        android:label="安达充值系统"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
