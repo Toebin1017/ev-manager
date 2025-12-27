@@ -6,7 +6,6 @@
     <application
         android:label="电动车管理"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
