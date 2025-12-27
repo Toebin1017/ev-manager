@@ -1,42 +1,50 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+# Flutter 项目打包APK的完整工作流配置
+# 适配github actions自动打包release版APK
+name: Flutter Build APK
 
-name: Dart
-
+# 触发条件：提交代码到main分支、手动触发都可以
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch: # 手动触发开关，推荐保留
 
 jobs:
-  build:
+  build_apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
+      # 1. 拉取你的项目代码
       - uses: actions/checkout@v4
 
-      # Note: This workflow uses the latest stable version of the Dart SDK.
-      # You can specify other versions if desired, see documentation here:
-      # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      # - uses: dart-lang/setup-dart@v1
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      # 2. 安装Flutter环境（核心！替代原来的dart环境）
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.x' # 稳定版flutter，适配绝大多数项目
+          channel: 'stable'          # 稳定渠道
 
+      # 3. 刷新flutter环境
+      - name: Flutter Doctor
+        run: flutter doctor -v
+
+      # 4. 安装flutter项目依赖（核心修改！原来是dart pub get，改成这个）
       - name: Install dependencies
-        run: dart pub get
+        run: flutter pub get
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
+      # 5. 清理项目缓存（避免打包缓存报错）
+      - name: Clean project
+        run: flutter clean
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: dart analyze
+      # 6. 构建Flutter Release正式版APK （最关键的打包步骤）
+      - name: Build Release APK
+        run: flutter build apk --release --split-per-abi
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: dart test
+      # 7. 上传打包好的APK文件到github，打包完成后可直接下载
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/
