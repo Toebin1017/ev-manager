@@ -1,5 +1,5 @@
-name: ev_manager
-description: 安达充值系统
+name: anda_manager
+description: 安达管理系统
 publish_to: 'none'
 version: 1.0.0
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace "com.example.ev_manager"
+    namespace "com.tianan.manager"
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
@@ -19,16 +19,19 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.ev_manager"
-        minSdk 21
+        applicationId "com.tianan.manager"
+        minSdkVersion flutter.minSdkVersion
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     buildTypes {
         release {
             signingConfig signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
